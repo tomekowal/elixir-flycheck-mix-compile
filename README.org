@@ -32,7 +32,7 @@ To use this contribution add it to your =~/.spacemacs=
 
 and copy this entire directory to =.emacs.d/private= where your private layers are.
 
-You also need to put the executable =mix-compile-helper= somewhere in your path.
+You also need to put the executable =mix_compile_helper= somewhere in your path.
 For example if =~/bin= is in your path you can run:
 
 #+begin_src bash
