@@ -10,12 +10,10 @@
  - [[Description][Description]]
  - [[Install][Install]]
  - [[How does it work?][How does it work?]]
-   - [[finds project root (the directory where =mix.exs= file is)][finds project root (the directory where =mix.exs= file is)]]
-   - [[runs =mix compile=][runs =mix compile=]]
-   - [[parses the output replacing relative paths with absolute paths][parses the output replacing relative paths with absolute paths]]
  - [[Known problems][Known problems]]
    - [[=Mix compile= works slowly][=Mix compile= works slowly]]
    - [[I didn't want to use =--force= option][I didn't want to use =--force= option]]
+   - [[It is UNSAFE][It is UNSAFE]]
  - [[Acknowledgements][Acknowledgements]]
 
 * Description
@@ -49,9 +47,10 @@ It also returns errors and warnings using paths relative to project root
 while =flycheck= wants paths relative to cwd or absolute paths.
 
 The executable:
-** finds project root (the directory where =mix.exs= file is)
-** runs =mix compile=
-** parses the output replacing relative paths with absolute paths
+
+- finds project root (the directory where =mix.exs= file is)
+- runs =mix compile=
+- parses the output replacing relative paths with absolute paths
 
 * Known problems
 ** =Mix compile= works slowly
@@ -65,6 +64,9 @@ Instead of forcing recompilation the executable touches the file.
 This forces only recompilation of that one file,
 but emacs may complain that file changed on disk.
 
+** It is UNSAFE
+Elixir compilation is based on macros and can do arbitrary things.
+Be sure to disable syntax checking when exploring untrusted sources.
 * Acknowledgements
 I was inspired by https://github.com/smeevil/flycheck-elixir-testresult,
 and big chunks of code are copied from that repository.
