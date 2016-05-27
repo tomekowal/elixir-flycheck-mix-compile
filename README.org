@@ -60,9 +60,6 @@ Even on small number of files. So expect a delay.
 This means we won't see warnings when entering a buffer.
 =--force= option forces recompilation of all files,
 but it slows things even more.
-Instead of forcing recompilation the executable touches the file.
-This forces only recompilation of that one file,
-but emacs may complain that file changed on disk.
 
 ** It is UNSAFE
 Elixir compilation is based on macros and can do arbitrary things.

@@ -4,7 +4,6 @@ defmodule Finder do
   def run({:ok, full_path}) do
     parts = full_path |> String.split("/") |> Enum.reverse
     root = Finder.get_project_root(parts)
-    System.cmd "touch", [full_path]
     {stdout, error_code} =  System.cmd "mix", ["compile", "--ignore-module-conflict"], cd: root, stderr_to_stdout: true
     stdout
     |> String.split("\n")
