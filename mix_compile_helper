@@ -1,0 +1,53 @@
+#!/usr/bin/env elixir
+defmodule Finder do
+  def run(:error), do: IO.puts(:stderr, "please give a full filepath as arugment!")
+  def run({:ok, full_path}) do
+    parts = full_path |> String.split("/") |> Enum.reverse
+    root = Finder.get_project_root(parts)
+    System.cmd "touch", [full_path]
+    {stdout, error_code} =  System.cmd "mix", ["compile", "--ignore-module-conflict"], cd: root, stderr_to_stdout: true
+    stdout
+    |> String.split("\n")
+    |> Enum.map(&(pwd(&1, root)))
+    |> Enum.join("\n")
+    |> IO.puts
+    error_code
+  end
+
+  def pwd(arg, root) do
+    arg
+    |> pwd_error(root)
+    |> pwd_warning(root)
+  end
+
+  def pwd_error(arg, root) do
+    if String.contains?(arg, "CompileError") do
+      arg
+      |> String.split(" ")
+      |> List.update_at(2, &(root <> "/" <> &1))
+      |> Enum.join(" ")
+    else
+      arg
+    end
+  end
+
+  def pwd_warning(arg, root) do
+    if String.contains?(arg, "warning:") do
+      arg
+      |> String.split(" ")
+      |> List.update_at(0, &(root <> "/" <> &1))
+      |> Enum.join(" ")
+    else
+      arg
+    end
+  end
+
+  def get_project_root([]), do: nil
+  def get_project_root([_part|parts]) do
+    current_path = parts |> Enum.reverse |> Enum.join("/")
+    mix_file = "#{current_path}/mix.exs"
+    if File.exists?(mix_file), do: current_path, else: get_project_root(parts)
+  end
+end
+
+System.argv |> Enum.fetch(0) |> Finder.run

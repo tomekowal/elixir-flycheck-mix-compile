@@ -1,0 +1,71 @@
+#+TITLE: elixir-flycheck-mix-compile layer
+#+HTML_HEAD_EXTRA: <link rel="stylesheet" type="text/css" href="../css/readtheorg.css" />
+
+#+CAPTION: logo
+
+# The maximum height of the logo should be 200 pixels.
+[[img/elixir-flycheck-mix-compile.png]]
+
+* Table of Contents                                        :TOC_4_org:noexport:
+ - [[Description][Description]]
+ - [[Install][Install]]
+ - [[How does it work?][How does it work?]]
+   - [[finds project root (the directory where =mix.exs= file is)][finds project root (the directory where =mix.exs= file is)]]
+   - [[runs =mix compile=][runs =mix compile=]]
+   - [[parses the output replacing relative paths with absolute paths][parses the output replacing relative paths with absolute paths]]
+ - [[Known problems][Known problems]]
+   - [[=Mix compile= works slowly][=Mix compile= works slowly]]
+   - [[I didn't want to use =--force= option][I didn't want to use =--force= option]]
+ - [[Acknowledgements][Acknowledgements]]
+
+* Description
+This layer uses Elixir's build tool =mix= to
+provide =flycheck= with compilation errors and warnings.
+Previous attempts used =elixirc=, but compiling file by file
+can't find all the errors that require knowledge about other files
+where records and macros are defined.
+
+* Install
+To use this contribution add it to your =~/.spacemacs=
+
+#+begin_src emacs-lisp
+  (setq-default dotspacemacs-configuration-layers '(elixir-flycheck-mix-compile))
+#+end_src
+
+and copy this entire directory to =.emacs.d/private= where your private layers are.
+
+You also need to put the executable =mix-compile-helper= somewhere in your path.
+For example if =~/bin= is in your path you can run:
+
+#+begin_src bash
+  ln -s `pwd`/mix_compile_helper ~/bin/mix_compile_helper
+#+end_src
+
+* How does it work?
+=Flycheck= is designed to run a command that is in your path for a single file.
+This approach doesn't work well with =mix=, because it needs to be run from
+the root of your project.
+It also returns errors and warnings using paths relative to project root
+while =flycheck= wants paths relative to cwd or absolute paths.
+
+The executable:
+** finds project root (the directory where =mix.exs= file is)
+** runs =mix compile=
+** parses the output replacing relative paths with absolute paths
+
+* Known problems
+** =Mix compile= works slowly
+Even on small number of files. So expect a delay.
+** I didn't want to use =--force= option
+=mix= doesn't recompile files that were successfully compiled and didn't change.
+This means we won't see warnings when entering a buffer.
+=--force= option forces recompilation of all files,
+but it slows things even more.
+Instead of forcing recompilation the executable touches the file.
+This forces only recompilation of that one file,
+but emacs may complain that file changed on disk.
+
+* Acknowledgements
+I was inspired by https://github.com/smeevil/flycheck-elixir-testresult,
+and big chunks of code are copied from that repository.
+The goals of the project are different, so I didn't fork the orignal repo.
