@@ -2,6 +2,7 @@
 defmodule :mix_compile_helper do
   def run() do
     project_root = get_project_root()
+
     if project_root do
       {stdout, exit_status} =
         System.cmd "mix", ["compile", "--ignore-module-conflict"],
@@ -45,27 +46,23 @@ defmodule :mix_compile_helper do
     if String.contains?(line, pattern) do
       line
       |> String.split(" ")
-      |> List.update_at(position, &(make_absolute(&1, root)))
+      |> List.update_at(position, &(Path.absname(&1, root)))
       |> Enum.join(" ")
     else
       line
     end
   end
 
-  defp make_absolute(relative_path, root) do
-    root <> "/" <> relative_path
-  end
-
   def get_project_root do
     System.cwd
-    |> String.split("/")
+    |> Path.split
     |> Enum.reverse
     |> get_project_root
   end
   def get_project_root([]), do: nil
   def get_project_root([_|rest] = reversed_path) do
-    current_path = reversed_path |> Enum.reverse |> Enum.join("/")
-    mix_file = "#{current_path}/mix.exs"
+    current_path = reversed_path |> Enum.reverse |> Path.join()
+    mix_file = Path.join(current_path, "mix.exs")
     if File.exists?(mix_file), do: current_path, else: get_project_root(rest)
   end
 end
