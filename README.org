@@ -15,6 +15,7 @@
    - [[I didn't want to use =--force= option][I didn't want to use =--force= option]]
    - [[It is UNSAFE][It is UNSAFE]]
  - [[Acknowledgements][Acknowledgements]]
+ - [[Contact/Contributions][Contact/Contributions]]
 
 * Description
 This layer uses Elixir's build tool =mix= to
@@ -68,3 +69,6 @@ Be sure to disable syntax checking when exploring untrusted sources.
 I was inspired by https://github.com/smeevil/flycheck-elixir-testresult,
 and big chunks of code are copied from that repository.
 The goals of the project are different, so I didn't fork the orignal repo.
+* Contact/Contributions
+Any comments and feedback is highly appreciated. You can use github issues
+or follow me on [[https://twitter.com/intent/follow?screen_name=snajper47][Twitter]].
