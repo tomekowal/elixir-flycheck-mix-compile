@@ -19,9 +19,10 @@ defmodule :mix_compile_helper do
   end
 
   def usage(:general) do
+    file = __ENV__.file |> Path.split |> List.last
     IO.puts "Usage:"
     IO.puts "Make sure executable is in the path. Run inside mix project"
-    IO.puts "    #{__MODULE__}"
+    IO.puts "    #{file}"
   end
   def usage(:root_not_found) do
     IO.puts "mix.exs not detected in the directory structure"
