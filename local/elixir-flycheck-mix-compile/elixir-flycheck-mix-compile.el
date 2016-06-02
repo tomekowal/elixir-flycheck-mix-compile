@@ -34,7 +34,7 @@
  "Defines a checker for elixir with mix compile"
  ;;:command ("mix_compile_helper"
  ;;          (eval (elixir-flycheck-mix-compile-project-root)))
- :command ("iex"
+ :command ("elixir"
            "-e"
            (eval (elixir-flycheck-mix-compile-cd-option))
            "-S"
@@ -65,11 +65,11 @@
            (concat (elixir-flycheck-mix-compile-project-root)
                    (flycheck-error-filename err))))
    errors)
- :modes (elixir-mode))
+ :modes (elixir-mode)
+ :predicate (lambda () (elixir-flycheck-mix-compile-project-root)))
 
 (defun elixir-flycheck-mix-compile-project-root ()
-  (file-truename
-   (locate-dominating-file buffer-file-name "mix.exs")))
+  (locate-dominating-file buffer-file-name "mix.exs"))
 
 (defun elixir-flycheck-mix-compile-cd-option ()
   (format "IEx.Helpers.cd(\"%s\")"
