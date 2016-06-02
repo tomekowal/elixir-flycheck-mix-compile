@@ -32,7 +32,14 @@
 (flycheck-define-checker
  elixir-mix-compile
  "Defines a checker for elixir with mix compile"
- :command ("mix_compile_helper" source-original)
+ ;;:command ("mix_compile_helper"
+ ;;          (eval (elixir-flycheck-mix-compile-project-root)))
+ :command ("iex"
+           "-e"
+           (eval (elixir-flycheck-mix-compile-cd-option))
+           "-S"
+           "mix"
+           "compile")
  :error-patterns
  ((warning line-start
             (file-name)
@@ -64,10 +71,18 @@
   (file-truename
    (locate-dominating-file buffer-file-name "mix.exs")))
 
+(defun elixir-flycheck-mix-compile-cd-option ()
+  (format "IEx.Helpers.cd(\"%s\")"
+          (elixir-flycheck-mix-compile-project-root)
+          ))
+
 ;;;###autoload
 (defun elixir-flycheck-mix-compile-setup ()
   "Setup Flycheck for Elixir."
-  (add-to-list 'flycheck-checkers 'elixir-mix-compile))
+  (add-to-list 'flycheck-checkers 'elixir-mix-compile)
+  ;; it doesn't make sense to check buffer on idle change
+  ;; only saved files will be checked by mix
+  (setq flycheck-check-syntax-automatically '(mode-enabled save)))
 
 (provide 'elixir-flycheck-mix-compile)
 ;;; elixir-flycheck-mix-compile.el ends here
