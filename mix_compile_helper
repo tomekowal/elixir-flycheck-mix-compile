@@ -7,11 +7,7 @@ defmodule :mix_compile_helper do
       {stdout, exit_status} =
         System.cmd "mix", ["compile", "--ignore-module-conflict"],
         cd: project_root, stderr_to_stdout: true
-      stdout
-      |> String.split("\n")
-      |> Enum.map(&(make_paths_absolute(&1, project_root)))
-      |> Enum.join("\n")
-      |> IO.puts
+      IO.puts stdout
       exit({:shutdown, exit_status})
     else
       usage(:root_not_found)
@@ -27,31 +23,6 @@ defmodule :mix_compile_helper do
   def usage(:root_not_found) do
     IO.puts "mix.exs not detected in the directory structure"
     usage(:general)
-  end
-
-  defp make_paths_absolute(line, root) do
-    line
-    |> make_error_paths_absolute(root)
-    |> make_warning_paths_absolute(root)
-  end
-
-  defp make_error_paths_absolute(line, root) do
-    replace_at_position_if_pattern(line, "CompileError", 2, root)
-  end
-
-  defp make_warning_paths_absolute(line, root) do
-    replace_at_position_if_pattern(line, "warning:", 0, root)
-  end
-
-  defp replace_at_position_if_pattern(line, pattern, position, root) do
-    if String.contains?(line, pattern) do
-      line
-      |> String.split(" ")
-      |> List.update_at(position, &(Path.absname(&1, root)))
-      |> Enum.join(" ")
-    else
-      line
-    end
   end
 
   def get_project_root do

@@ -51,7 +51,18 @@
           ": "
           (message)
           line-end))
+ :error-filter
+ (lambda (errors)
+   (dolist (err (flycheck-sanitize-errors errors))
+     (setf (flycheck-error-filename err)
+           (concat (elixir-flycheck-mix-compile-project-root)
+                   (flycheck-error-filename err))))
+   errors)
  :modes (elixir-mode))
+
+(defun elixir-flycheck-mix-compile-project-root ()
+  (file-truename
+   (locate-dominating-file buffer-file-name "mix.exs")))
 
 ;;;###autoload
 (defun elixir-flycheck-mix-compile-setup ()
