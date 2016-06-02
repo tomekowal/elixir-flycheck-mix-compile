@@ -31,14 +31,16 @@
 
 (defconst elixir-flycheck-mix-compile-packages
   '(flycheck
-    (elixir-flycheck-mix-compile :location local)))
+    (flycheck-mix
+     :location (recipe
+                :fetcher github
+                :repo "tomekowal/flycheck-mix"))))
 
 (when (configuration-layer/layer-usedp 'syntax-checking)
-  (defun elixir-flycheck-mix-compile/init-elixir-flycheck-mix-compile ()
-    (autoload 'elixir-flycheck-mix-compile-setup "elixir-flycheck-mix-compile" "Setup Flycheck for Elixir" nil nil)
-    (use-package elixir-flycheck-mix-compile
-     :defer t
-     :init (add-hook 'elixir-mode-hook 'elixir-flycheck-mix-compile-setup)))
+  (defun elixir-flycheck-mix-compile/init-flycheck-mix ()
+    (use-package flycheck-mix
+      :defer t
+      :init (add-hook 'elixir-mode-hook 'flycheck-mix-setup)))
   (defun elixir-flycheck-mix-compile/post-init-flycheck ()
     (add-hook 'elixir-mode-hook 'flycheck-mode)))
 
