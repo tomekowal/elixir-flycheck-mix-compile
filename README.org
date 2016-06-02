@@ -33,13 +33,6 @@ To use this contribution add it to your =~/.spacemacs=
 
 and copy this entire directory to =.emacs.d/private= where your private layers are.
 
-You also need to put the executable =mix_compile_helper= somewhere in your path.
-For example if =~/bin= is in your path you can run:
-
-#+begin_src bash
-  ln -s `pwd`/mix_compile_helper ~/bin/mix_compile_helper
-#+end_src
-
 * How does it work?
 =Flycheck= is designed to run a command that is in your path for a single file.
 This approach doesn't work well with =mix=, because it needs to be run from
@@ -47,11 +40,11 @@ the root of your project.
 It also returns errors and warnings using paths relative to project root
 while =flycheck= wants paths relative to cwd or absolute paths.
 
-The executable:
+The workarounds are:
 
-- finds project root (the directory where =mix.exs= file is)
-- runs =mix compile=
-- parses the output replacing relative paths with absolute paths
+- predicate finds project root (the directory where =mix.exs= file is)
+- =mix compile= is run with =elixir -e "cd(project_root)"=
+- =:error-filter= prepends the project root to paths from =mix compile= making them absolute 
 
 * Known problems
 ** =Mix compile= works slowly
@@ -61,14 +54,16 @@ Even on small number of files. So expect a delay.
 This means we won't see warnings when entering a buffer.
 =--force= option forces recompilation of all files,
 but it slows things even more.
-
 ** It is UNSAFE
 Elixir compilation is based on macros and can do arbitrary things.
 Be sure to disable syntax checking when exploring untrusted sources.
+** It works only on saved files instead of buffers
+
 * Acknowledgements
 I was inspired by https://github.com/smeevil/flycheck-elixir-testresult,
 and big chunks of code are copied from that repository.
 The goals of the project are different, so I didn't fork the orignal repo.
+
 * Contact/Contributions
 Any comments and feedback is highly appreciated. You can use github issues
 or follow me on [[https://twitter.com/intent/follow?screen_name=snajper47][Twitter]].
